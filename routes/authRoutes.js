@@ -1,5 +1,5 @@
 const express = require('express');
-const { forgotPassword, resetPassword } = require('../controllers/authController');
+const { forgotPassword, resetPassword, registerUser } = require('../controllers/authController');
 
 const router = express.Router();
 
