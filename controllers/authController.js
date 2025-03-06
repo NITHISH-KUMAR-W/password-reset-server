@@ -1,8 +1,11 @@
-const crypto = require('crypto');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer');
-const User = require('../models/User');
+import crypto from 'crypto';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import nodemailer from 'nodemailer';
+import dotenv from 'dotenv';
+import User from '../models/User.js';
+
+dotenv.config();
 
 const transporter = nodemailer.createTransport({
     service: 'Gmail',
@@ -12,18 +15,18 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-exports.forgotPassword = async (req, res) => {
+export const forgotPassword = async (req, res) => {
     const { email } = req.body;
     const user = await User.findOne({ email });
 
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    const resetToken = crypto.randomBytes(8).toString("hex"); // Reduced to 16 bytes
+    const resetToken = crypto.randomBytes(8).toString("hex"); // Reduced to 8 bytes
     user.resetToken = resetToken;
     user.resetTokenExpires = Date.now() + 3600000; // Token valid for 1 hour
     await user.save();
 
-    const resetLink = `https://password-reset-nit-ui.netlify.app/reset-password/${resetToken}`;
+    const resetLink = `https://password-reset-nit-ui.netlify.app/resetpassword/${resetToken}`;
 
     await transporter.sendMail({
         to: email,
@@ -34,7 +37,7 @@ exports.forgotPassword = async (req, res) => {
     res.json({ message: "Reset link sent to email" });
 };
 
-exports.resetPassword = async (req, res) => {
+export const resetPassword = async (req, res) => {
     const { token } = req.params;
     const { password } = req.body;
 
@@ -50,7 +53,7 @@ exports.resetPassword = async (req, res) => {
     res.json({ message: "Password updated successfully" });
 };
 
-exports.registerUser = async (req, res) => {
+export const registerUser = async (req, res) => {
     try {
         const { name, email, password } = req.body;
 
