@@ -18,7 +18,7 @@ exports.forgotPassword = async (req, res) => {
 
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    const resetToken = crypto.randomBytes(32).toString("hex");
+    const resetToken = crypto.randomBytes(16).toString("hex"); // Reduced to 16 bytes
     user.resetToken = resetToken;
     user.resetTokenExpires = Date.now() + 3600000; // Token valid for 1 hour
     await user.save();
