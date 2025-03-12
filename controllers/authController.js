@@ -87,11 +87,9 @@ export const registerUser = async (req, res) => {
 export const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
-
-        // Check if user exists
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(400).json({ message: "Invalid email or password" });
+            return res.status(404).json({ message: "User not Found! Kindly Register" });
         }
 
         // Compare password
